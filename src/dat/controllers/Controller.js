@@ -120,6 +120,10 @@ class Controller {
   isModified() {
     return this.initialValue !== this.getValue();
   }
+
+  setName(name) {
+    this.__li.firstElementChild.firstElementChild.innerHTML = name;
+  }
 }
 
 export default Controller;

@@ -239,6 +239,10 @@ $button-height: 20px;
     cursor: pointer;
   }
 
+  .cr.button .property-name{
+    font-size: 0;
+  }
+
   /** allow overflow for color selector */
   .cr.color {
     overflow: visible;

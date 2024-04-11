@@ -23,13 +23,16 @@ import dom from '../dom/dom';
  * @param {string} property The name of the property to be manipulated
  */
 class FunctionController extends Controller {
-  constructor(object, property, text) {
+  constructor(object, property, text, button) {
     super(object, property);
 
     const _this = this;
 
-    this.__button = document.createElement('div');
-    this.__button.innerHTML = text === undefined ? 'Fire' : text;
+    this.__button = document.createElement(button ? 'button' : 'div');
+  
+    if (button) {
+      this.setName(property)
+    }
 
     dom.bind(this.__button, 'click', function(e) {
       e.preventDefault();
@@ -37,9 +40,22 @@ class FunctionController extends Controller {
       return false;
     });
 
-    dom.addClass(this.__button, 'button');
-
+    if (!button) {
+      dom.addClass(this.__button, 'button');
+    }
     this.domElement.appendChild(this.__button);
+  }
+
+  getTagName() {
+    return this.__button.tagName
+  }
+
+  setName(name) {
+    if (this.getTagName() === 'BUTTON') {
+      this.__button.textContent = name;
+    } else {
+      super.setName(name);
+    }
   }
 
   fire() {

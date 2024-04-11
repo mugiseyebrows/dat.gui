@@ -568,6 +568,17 @@ common.extend(
       );
     },
 
+    addButton: function(object, property) {
+      return add(
+        this,
+        object,
+        property,
+        {
+          button: true
+        }
+      );
+    },
+
     /**
      * Removes the given controller from the GUI.
      * @param {Controller} controller
@@ -978,7 +989,7 @@ function augmentController(gui, li, controller) {
      * @return {Controller}
      */
     name: function(name) {
-      controller.__li.firstElementChild.firstElementChild.innerHTML = name;
+      controller.setName(name)
       return controller;
     },
 
@@ -1059,9 +1070,12 @@ function augmentController(gui, li, controller) {
       e.stopPropagation(); // Prevents double-toggle
     });
   } else if (controller instanceof FunctionController) {
-    dom.bind(li, 'click', function() {
-      dom.fakeEvent(controller.__button, 'click');
-    });
+    
+    if (controller.getTagName() !== 'BUTTON') {
+      dom.bind(li, 'click', function() {
+        dom.fakeEvent(controller.__button, 'click');
+      });
+    } 
 
     dom.bind(li, 'mouseover', function() {
       dom.addClass(controller.__button, 'hover');
@@ -1151,12 +1165,13 @@ function add(gui, object, property, params) {
   let controller;
 
   const factoryArgs = [object, property].concat(params.factoryArgs);
-  //console.log('property', property, 'params', params, 'params.factoryArgs', params.factoryArgs)
 
   if (params.color) {
     controller = new ColorController(object, property);
   } else if (params.textarea) {
     controller = new StringController(object, property, true);
+  } else if (params.button) {
+    controller = new FunctionController(object, property, '', true);
   } else {
     const factoryArgs = [object, property].concat(params.factoryArgs);
     controller = ControllerFactory.apply(gui, factoryArgs);
@@ -1188,7 +1203,13 @@ function add(gui, object, property, params) {
     if (controller.getInputTag() === 'TEXTAREA') {
       dom.addClass(li, 'text');
     } else {
-      dom.addClass(li, 'string');
+      dom.addClass(li, typeof controller.getValue());
+    }
+  } else if (controller instanceof FunctionController) {
+    if (controller.getTagName() === 'BUTTON') {
+      dom.addClass(li, 'button');
+    } else {
+      dom.addClass(li, typeof controller.getValue());
     }
   } else {
     dom.addClass(li, typeof controller.getValue());
