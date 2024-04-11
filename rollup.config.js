@@ -12,13 +12,12 @@
  */
 
 import fs from 'fs';
-import path from 'path';
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 import cleanup from 'rollup-plugin-cleanup';
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import sass from 'rollup-plugin-sass';
 
-const banner = fs.readFileSync(path.join(__dirname, 'licenseBanner.txt'));
+const banner = fs.readFileSync('licenseBanner.txt');
 
 export default {
   input: 'src/dat/index.js',
@@ -47,7 +46,7 @@ export default {
       options: {outputStyle: 'compressed'}
     }),
     babel({
-      plugins: ['external-helpers'],
+      babelHelpers: 'bundled',
       exclude: 'node_modules/**'
     }),
     cleanup()
