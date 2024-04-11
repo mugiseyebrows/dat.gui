@@ -31,10 +31,11 @@
         color0: "#ffae23", // CSS string
         color1: [ 0, 128, 255 ], // RGB array
         color2: [ 0, 128, 255, 0.3 ], // RGB with alpha
-        color3: { h: 350, s: 0.9, v: 0.3 } // Hue, saturation, value
+        color3: { h: 350, s: 0.9, v: 0.3 }, // Hue, saturation, value
+        color4: { h: 350, s: 0.9, v: 0.3, a:0.2 }, // Hue, saturation, value, alpha
     };
 
-    var gui = new dat.gui.GUI();
+    var gui = new dat.gui.GUI({width: 300});
 
     gui.remember(obj);
 
@@ -58,6 +59,7 @@
     f1.addColor(obj, 'color1');
     f1.addColor(obj, 'color2');
     f1.addColor(obj, 'color3');
+    f1.addColor(obj, 'color4');
 
     var f2 = gui.addFolder('Another Folder');
     f2.add(obj, 'noiseStrength');
