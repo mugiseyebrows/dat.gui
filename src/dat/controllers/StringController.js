@@ -23,7 +23,7 @@ import dom from '../dom/dom';
  * @param {string} property The name of the property to be manipulated
  */
 class StringController extends Controller {
-  constructor(object, property) {
+  constructor(object, property, textarea) {
     super(object, property);
 
     const _this = this;
@@ -38,21 +38,32 @@ class StringController extends Controller {
       }
     }
 
-    this.__input = document.createElement('input');
-    this.__input.setAttribute('type', 'text');
+    if (textarea) {
+      this.__input = document.createElement('textarea');
+    } else {
+      this.__input = document.createElement('input');
+      this.__input.setAttribute('type', 'text');
+    }
 
     dom.bind(this.__input, 'keyup', onChange);
     dom.bind(this.__input, 'change', onChange);
     dom.bind(this.__input, 'blur', onBlur);
-    dom.bind(this.__input, 'keydown', function(e) {
-      if (e.keyCode === 13) {
-        this.blur();
-      }
-    });
+
+    if (!textarea) {
+      dom.bind(this.__input, 'keydown', function(e) {
+        if (e.keyCode === 13) {
+          this.blur();
+        }
+      });
+    }
 
     this.updateDisplay();
 
     this.domElement.appendChild(this.__input);
+  }
+
+  getInputTag() {
+    return this.__input.tagName
   }
 
   updateDisplay() {

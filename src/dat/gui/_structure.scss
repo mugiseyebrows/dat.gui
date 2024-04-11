@@ -193,6 +193,15 @@ $button-height: 20px;
     float: right;
   }
 
+  .c textarea {
+    border: 0;
+    width: 100%;
+    float: right;
+    padding: 3px;
+    height: $row-height * 1.7;
+    resize: vertical;
+  }
+
   /** Shorter number boxes when slider is present. */
   .has-slider input[type=text] {
     width: 30%;
@@ -233,6 +242,10 @@ $button-height: 20px;
   /** allow overflow for color selector */
   .cr.color {
     overflow: visible;
+  }
+
+  .cr.text {
+    height: auto;
   }
 
   .selector {

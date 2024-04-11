@@ -26,6 +26,7 @@ import dom from '../dom/dom';
 import common from '../utils/common';
 
 import styleSheet from './style.scss'; // CSS to embed in build
+import StringController from '../controllers/StringController';
 
 css.inject(styleSheet);
 
@@ -552,6 +553,17 @@ common.extend(
         property,
         {
           color: true
+        }
+      );
+    },
+
+    addTextarea: function(object, property) {
+      return add(
+        this,
+        object,
+        property,
+        {
+          textarea: true
         }
       );
     },
@@ -1138,8 +1150,13 @@ function add(gui, object, property, params) {
 
   let controller;
 
+  const factoryArgs = [object, property].concat(params.factoryArgs);
+  //console.log('property', property, 'params', params, 'params.factoryArgs', params.factoryArgs)
+
   if (params.color) {
     controller = new ColorController(object, property);
+  } else if (params.textarea) {
+    controller = new StringController(object, property, true);
   } else {
     const factoryArgs = [object, property].concat(params.factoryArgs);
     controller = ControllerFactory.apply(gui, factoryArgs);
@@ -1166,6 +1183,13 @@ function add(gui, object, property, params) {
   dom.addClass(li, GUI.CLASS_CONTROLLER_ROW);
   if (controller instanceof ColorController) {
     dom.addClass(li, 'color');
+  } else if (controller instanceof StringController) {
+    console.log('tag', controller.getInputTag(), controller.getInputTag() === 'TEXTAREA')
+    if (controller.getInputTag() === 'TEXTAREA') {
+      dom.addClass(li, 'text');
+    } else {
+      dom.addClass(li, 'string');
+    }
   } else {
     dom.addClass(li, typeof controller.getValue());
   }

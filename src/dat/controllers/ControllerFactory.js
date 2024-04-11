@@ -49,7 +49,7 @@ const ControllerFactory = function(object, property) {
   }
 
   if (common.isString(initialValue)) {
-    return new StringController(object, property);
+    return new StringController(object, property, false);
   }
 
   if (common.isFunction(initialValue)) {

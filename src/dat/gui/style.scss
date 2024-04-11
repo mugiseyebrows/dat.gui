@@ -156,6 +156,15 @@ $input-color: lighten($background-color, 8.5%);
       }
     }
 
+    &.text {
+      border-left: 3px solid $string-color;
+      textarea {
+        font-family: Arial, Helvetica, sans-serif;
+        color: $string-color;
+        background: $input-color;
+      }
+    }
+
     &.function:hover,
     &.boolean:hover {
       background: #111;
@@ -177,7 +186,18 @@ $input-color: lighten($background-color, 8.5%);
         background: lighten($input-color, $active-lighten);
         color: #fff;
       }
+    }
 
+    textarea {
+      background: $input-color;
+      outline: none;
+      &:hover {
+        background: lighten($input-color, $hover-lighten);
+      }
+      &:focus {
+        background: lighten($input-color, $active-lighten);
+        color: #fff;
+      }
     }
 
     .slider {
