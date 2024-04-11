@@ -16,6 +16,7 @@ import dom from '../dom/dom';
 import Color from '../color/Color';
 import interpret from '../color/interpret';
 import common from '../utils/common';
+import math from '../color/math'
 
 /**
  * @class Represents a given property of an object that is a color.
@@ -37,6 +38,15 @@ class ColorController extends Controller {
 
     this.__selector = document.createElement('div');
     this.__selector.className = 'selector';
+
+    this.__alpha_field = document.createElement('div');
+    this.__alpha_field.className = 'alpha-field';
+
+    this.__alpha_knob = document.createElement('div');
+    this.__alpha_knob.className = 'alpha-knob';
+
+    this.__alpha_bg = document.createElement('div');
+    this.__alpha_bg.className = 'alpha-bg';
 
     this.__saturation_field = document.createElement('div');
     this.__saturation_field.className = 'saturation-field';
@@ -82,7 +92,7 @@ class ColorController extends Controller {
     const valueField = document.createElement('div');
 
     common.extend(this.__selector.style, {
-      width: '122px',
+      width: '141px',
       height: '102px',
       padding: '3px',
       backgroundColor: '#222',
@@ -107,10 +117,20 @@ class ColorController extends Controller {
       zIndex: 1
     });
 
+    common.extend(this.__alpha_knob.style, {
+      position: 'absolute',
+      width: '15px',
+      height: '2px',
+      borderLeft: '4px solid #fff',
+      left: '-4px',
+      zIndex: 100
+    });
+
     common.extend(this.__saturation_field.style, {
       width: '100px',
       height: '100px',
       border: '1px solid #555',
+      marginLeft: '20px',
       marginRight: '3px',
       display: 'inline-block',
       cursor: 'pointer'
@@ -132,6 +152,26 @@ class ColorController extends Controller {
       position: 'absolute',
       top: '3px',
       right: '3px'
+    });
+
+    let alpha_shared = {
+      width: '15px',
+      height: '100px',
+      position: 'absolute',
+      top: '3px',
+      left: '3px',
+      border: '1px solid #555',
+    };
+
+    common.extend(this.__alpha_bg.style, alpha_shared, {
+      backgroundImage: 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURf///7+/v6NDdjkAAAAJcEhZcwAAEnMAABJzAYwiuQcAAAAUSURBVBjTYwABQSCglEENMxgYGAAynwRB8BEAgQAAAABJRU5ErkJggg==)',
+      zIndex: 1,
+    });
+
+    common.extend(this.__alpha_field.style, alpha_shared, {
+      background: 'linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%)',
+      cursor: 'ns-resize',
+      zIndex: 2,
     });
 
     hueGradient(this.__hue_field);
@@ -157,6 +197,9 @@ class ColorController extends Controller {
     dom.bind(this.__hue_field, 'mousedown', fieldDownH);
     dom.bind(this.__hue_field, 'touchstart', fieldDownH);
 
+    dom.bind(this.__alpha_field, 'mousedown', fieldDownA);
+    dom.bind(this.__alpha_field, 'touchstart', fieldDownA);
+
     function fieldDown(e) {
       setSV(e);
       dom.bind(window, 'mousemove', setSV);
@@ -173,6 +216,14 @@ class ColorController extends Controller {
       dom.bind(window, 'touchend', fieldUpH);
     }
 
+    function fieldDownA(e) {
+      setA(e)
+      dom.bind(window, 'mousemove', setA);
+      dom.bind(window, 'touchmove', setA);
+      dom.bind(window, 'mouseup', fieldUpA);
+      dom.bind(window, 'touchend', fieldUpA);
+    }
+
     function fieldUpSV() {
       dom.unbind(window, 'mousemove', setSV);
       dom.unbind(window, 'touchmove', setSV);
@@ -186,6 +237,14 @@ class ColorController extends Controller {
       dom.unbind(window, 'touchmove', setH);
       dom.unbind(window, 'mouseup', fieldUpH);
       dom.unbind(window, 'touchend', fieldUpH);
+      onFinish();
+    }
+
+    function fieldUpA() {
+      dom.unbind(window, 'mousemove', setA);
+      dom.unbind(window, 'touchmove', setA);
+      dom.unbind(window, 'mouseup', fieldUpA);
+      dom.unbind(window, 'touchend', fieldUpA);
       onFinish();
     }
 
@@ -210,11 +269,16 @@ class ColorController extends Controller {
     this.__selector.appendChild(this.__saturation_field);
     this.__selector.appendChild(this.__hue_field);
     this.__hue_field.appendChild(this.__hue_knob);
+    this.__selector.appendChild(this.__alpha_field);
+    this.__selector.appendChild(this.__alpha_bg);
+    this.__alpha_field.appendChild(this.__alpha_knob);
 
     this.domElement.appendChild(this.__input);
     this.domElement.appendChild(this.__selector);
 
     this.updateDisplay();
+
+    updateAlphaBackground();
 
     function setSV(e) {
       if (e.type.indexOf('touch') === -1) { e.preventDefault(); }
@@ -241,6 +305,7 @@ class ColorController extends Controller {
 
       _this.setValue(_this.__color.toOriginal());
 
+      updateAlphaBackground();
 
       return false;
     }
@@ -262,7 +327,36 @@ class ColorController extends Controller {
 
       _this.setValue(_this.__color.toOriginal());
 
+      updateAlphaBackground();
+
       return false;
+    }
+
+    function updateAlphaBackground() {
+      let {r,g,b} = math.hsv_to_rgb(_this.__color.h, _this.__color.s, _this.__color.v)
+      r = Math.round(r)
+      g = Math.round(g)
+      b = Math.round(b)
+      let background = `linear-gradient(to bottom, rgba(${r},${g},${b},1) 0%,rgba(${r},${b},${g},0) 100%)`
+      _this.__alpha_field.style.background = background
+    }
+
+    function setA(e) {
+      if (e.type.indexOf('touch') === -1) { e.preventDefault(); }
+
+      const fieldRect = _this.__hue_field.getBoundingClientRect();
+      const { clientY } = (e.touches && e.touches[0]) || e;
+      let a = 1 - (clientY - fieldRect.top) / (fieldRect.bottom - fieldRect.top);
+
+      if (a > 1) {
+        a = 1;
+      } else if (a < 0) {
+        a = 0;
+      }
+
+      _this.__color.a = a.toFixed(2);
+
+      _this.setValue(_this.__color.toOriginal());
     }
   }
 
@@ -297,13 +391,15 @@ class ColorController extends Controller {
     const _flip = 255 - flip;
 
     common.extend(this.__field_knob.style, {
-      marginLeft: 100 * this.__color.s - 7 + 'px',
+      marginLeft: 100 * this.__color.s - 7 + 19 + 'px',
       marginTop: 100 * (1 - this.__color.v) - 7 + 'px',
       backgroundColor: this.__temp.toHexString(),
       border: this.__field_knob_border + 'rgb(' + flip + ',' + flip + ',' + flip + ')'
     });
 
     this.__hue_knob.style.marginTop = (1 - this.__color.h / 360) * 100 + 'px';
+
+    this.__alpha_knob.style.marginTop = (1 - this.__color.a) * 100 + 'px';
 
     this.__temp.s = 1;
     this.__temp.v = 1;
