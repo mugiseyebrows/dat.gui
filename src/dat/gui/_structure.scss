@@ -2,6 +2,7 @@ $nest-margin: 4px;
 $row-height: 27px;
 
 $button-height: 20px;
+$input-font-size: 13px;
 
 .dg {
 
@@ -191,6 +192,7 @@ $button-height: 20px;
     padding: 3px;
     width: 100%;
     float: right;
+    font-size: $input-font-size;
   }
 
   .c textarea {
@@ -200,6 +202,7 @@ $button-height: 20px;
     padding: 3px;
     height: $row-height * 1.7;
     resize: vertical;
+    font-size: $input-font-size;
   }
 
   /** Shorter number boxes when slider is present. */
