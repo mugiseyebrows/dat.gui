@@ -62,7 +62,7 @@ class StringController extends Controller {
     this.domElement.appendChild(this.__input);
   }
 
-  getInputTag() {
+  getTagName() {
     return this.__input.tagName
   }
 

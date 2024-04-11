@@ -241,6 +241,11 @@ $button-height: 20px;
 
   .cr.button .property-name{
     font-size: 0;
+    color: transparent;
+  }
+
+  .cr.button button {
+    cursor: pointer;
   }
 
   /** allow overflow for color selector */
@@ -248,7 +253,7 @@ $button-height: 20px;
     overflow: visible;
   }
 
-  .cr.text {
+  .cr.textarea {
     height: auto;
   }
 
