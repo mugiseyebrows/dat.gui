@@ -1199,9 +1199,8 @@ function add(gui, object, property, params) {
   if (controller instanceof ColorController) {
     dom.addClass(li, 'color');
   } else if (controller instanceof StringController) {
-    console.log('tag', controller.getInputTag(), controller.getInputTag() === 'TEXTAREA')
-    if (controller.getInputTag() === 'TEXTAREA') {
-      dom.addClass(li, 'text');
+    if (controller.getTagName() === 'TEXTAREA') {
+      dom.addClass(li, 'textarea');
     } else {
       dom.addClass(li, typeof controller.getValue());
     }
