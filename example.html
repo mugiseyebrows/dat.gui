@@ -28,11 +28,10 @@
           alert('Beeeeeep!');
         },
 
-        color0: "#ffae23", // CSS string
-        color1: [ 0, 128, 255 ], // RGB array
-        color2: [ 0, 128, 255, 0.3 ], // RGB with alpha
-        color3: { h: 350, s: 0.9, v: 0.3 }, // Hue, saturation, value
-        color4: { h: 350, s: 0.9, v: 0.3, a:0.2 }, // Hue, saturation, value, alpha
+        color0: "#ff996d", // CSS string
+        color1: [ 255, 219, 117], // RGB array
+        color2: [ 114, 255, 161, 0.8], // RGB with alpha
+        color3: { h:242, s:0.6, v:1.0, a:0.8}, // Hue, saturation, value, alpha
     };
 
     var gui = new dat.gui.GUI({width: 300});
@@ -59,7 +58,6 @@
     f1.addColor(obj, 'color1');
     f1.addColor(obj, 'color2');
     f1.addColor(obj, 'color3');
-    f1.addColor(obj, 'color4');
 
     var f2 = gui.addFolder('Another Folder');
     f2.add(obj, 'noiseStrength');
