@@ -23,8 +23,9 @@ class Color {
     if (this.__state === false) {
       throw new Error('Failed to interpret color arguments');
     }
-
-    this.__state.a = this.__state.a || 1;
+    if (this.__state.a === undefined) {
+      this.__state.a = 1;
+    }
   }
 
   toString() {
@@ -33,6 +34,11 @@ class Color {
 
   toHexString() {
     return colorToString(this, true);
+  }
+
+  toRGBAString() {
+    const {r, g, b, a} = this;
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
   }
 
   toOriginal() {

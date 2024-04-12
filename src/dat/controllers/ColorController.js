@@ -16,9 +16,9 @@ import dom from '../dom/dom';
 import Color from '../color/Color';
 import interpret from '../color/interpret';
 import common from '../utils/common';
-import math from '../color/math'
+import math from '../color/math';
 
-const checkboardImage = 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURf///7+/v6NDdjkAAAAJcEhZcwAAEnMAABJzAYwiuQcAAAAUSURBVBjTYwABQSCglEENMxgYGAAynwRB8BEAgQAAAABJRU5ErkJggg==)'
+const CHECKBOARD_IMAGE = 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURf///7+/v6NDdjkAAAAJcEhZcwAAEnMAABJzAYwiuQcAAAAUSURBVBjTYwABQSCglEENMxgYGAAynwRB8BEAgQAAAABJRU5ErkJggg==)';
 
 /**
  * @class Represents a given property of an object that is a color.
@@ -46,9 +46,6 @@ class ColorController extends Controller {
 
     this.__alpha_knob = document.createElement('div');
     this.__alpha_knob.className = 'alpha-knob';
-
-    this.__alpha_bg = document.createElement('div');
-    this.__alpha_bg.className = 'alpha-bg';
 
     this.__saturation_field = document.createElement('div');
     this.__saturation_field.className = 'saturation-field';
@@ -141,10 +138,8 @@ class ColorController extends Controller {
     common.extend(valueField.style, {
       width: '100%',
       height: '100%',
-      background: 'none'
+      background: linearGradient('to bottom', 'rgba(0,0,0,0)', '#000')
     });
-
-    linearGradient(valueField, 'top', 'rgba(0,0,0,0)', '#000');
 
     common.extend(this.__hue_field.style, {
       width: '15px',
@@ -156,27 +151,17 @@ class ColorController extends Controller {
       right: '3px'
     });
 
-    let alpha_shared = {
+    common.extend(this.__alpha_field.style, {
       width: '15px',
       height: '100px',
       position: 'absolute',
       top: '3px',
       left: '3px',
       border: '1px solid #555',
-    };
-
-    common.extend(this.__alpha_bg.style, alpha_shared, {
-      backgroundImage: checkboardImage,
-      zIndex: 1,
-    });
-
-    common.extend(this.__alpha_field.style, alpha_shared, {
-      background: 'linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%)',
       cursor: 'ns-resize',
-      zIndex: 2,
     });
 
-    hueGradient(this.__hue_field);
+    this.__hue_field.style.background = hueGradient();
 
     common.extend(this.__input.style, {
       outline: 'none',
@@ -219,7 +204,7 @@ class ColorController extends Controller {
     }
 
     function fieldDownA(e) {
-      setA(e)
+      setA(e);
       dom.bind(window, 'mousemove', setA);
       dom.bind(window, 'touchmove', setA);
       dom.bind(window, 'mouseup', fieldUpA);
@@ -272,7 +257,6 @@ class ColorController extends Controller {
     this.__selector.appendChild(this.__hue_field);
     this.__hue_field.appendChild(this.__hue_knob);
     this.__selector.appendChild(this.__alpha_field);
-    this.__selector.appendChild(this.__alpha_bg);
     this.__alpha_field.appendChild(this.__alpha_knob);
 
     this.domElement.appendChild(this.__input);
@@ -336,8 +320,9 @@ class ColorController extends Controller {
 
     function updateAlphaBackground() {
       const { r, g, b } = _this.__color;
-      const background = `linear-gradient(to bottom, rgba(${r},${g},${b},1) 0%,rgba(${r},${b},${g},0) 100%)`;
-      _this.__alpha_field.style.background = background;
+      const opaque = new Color([r, g, b, 1]);
+      const transparent = new Color([r, g, b, 0]);
+      _this.__alpha_field.style.background = linearGradient('to bottom', opaque, transparent) + ', ' + CHECKBOARD_IMAGE;
     }
 
     function setA(e) {
@@ -408,36 +393,26 @@ class ColorController extends Controller {
     this.__temp.s = 1;
     this.__temp.v = 1;
 
-    linearGradient(this.__saturation_field, 'left', '#fff', this.__temp.toHexString());
+    this.__saturation_field.style.background = linearGradient('to right', '#fff', this.__temp.toHexString());
 
     this.__input.value = this.__color.toString();
 
-    const gradient = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, ${a}), rgba(${r}, ${g}, ${b}, ${a}))`;
-
     common.extend(this.__input.style, {
-      background: gradient + ', ' + checkboardImage,
+      background: linearGradient('to right', this.__color, this.__color) + ', ' + CHECKBOARD_IMAGE,
       color: 'rgb(' + flip + ',' + flip + ',' + flip + ')',
       textShadow: this.__input_textShadow + 'rgba(' + _flip + ',' + _flip + ',' + _flip + ',.7)'
     });
   }
 }
 
-const vendors = ['-moz-', '-o-', '-webkit-', '-ms-', ''];
-
-function linearGradient(elem, x, a, b) {
-  elem.style.background = '';
-  common.each(vendors, function(vendor) {
-    elem.style.cssText += 'background: ' + vendor + 'linear-gradient(' + x + ', ' + a + ' 0%, ' + b + ' 100%); ';
-  });
+function linearGradient(dir, a, b) {
+  const color1 = common.isString(a) ? a : a.toRGBAString();
+  const color2 = common.isString(b) ? b : b.toRGBAString();
+  return 'linear-gradient(' + dir + ', ' + color1 + ' 0%, ' + color2 + ' 100%)';
 }
 
-function hueGradient(elem) {
-  elem.style.background = '';
-  elem.style.cssText += 'background: -moz-linear-gradient(top,  #ff0000 0%, #ff00ff 17%, #0000ff 34%, #00ffff 50%, #00ff00 67%, #ffff00 84%, #ff0000 100%);';
-  elem.style.cssText += 'background: -webkit-linear-gradient(top,  #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%);';
-  elem.style.cssText += 'background: -o-linear-gradient(top,  #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%);';
-  elem.style.cssText += 'background: -ms-linear-gradient(top,  #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%);';
-  elem.style.cssText += 'background: linear-gradient(top,  #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%);';
+function hueGradient() {
+  return 'linear-gradient(to bottom, #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%)';
 }
 
 export default ColorController;
