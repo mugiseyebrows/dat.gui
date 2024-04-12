@@ -1188,8 +1188,6 @@ function add(gui, object, property, params) {
 
   let controller;
 
-  const factoryArgs = [object, property].concat(params.factoryArgs);
-
   if (params.color) {
     controller = new ColorController(object, property);
   } else if (params.textarea) {
