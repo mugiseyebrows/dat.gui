@@ -560,8 +560,8 @@ common.extend(
     /**
      * Adds a new string controller with textarea.
      *
-     * @param {*} object
-     * @param {*} property
+     * @param {object} object
+     * @param {string} property
      * @returns {Controller} The controller that was added to the GUI.
      * @instance
      *
@@ -583,8 +583,8 @@ common.extend(
     /**
      * Adds new FunctionController with button
      *
-     * @param {*} object
-     * @param {*} property
+     * @param {object} object
+     * @param {string} property
      * @returns {Controller} The controller that was added to the GUI.\
      * @instance
      *
