@@ -333,12 +333,9 @@ class ColorController extends Controller {
     }
 
     function updateAlphaBackground() {
-      let {r,g,b} = math.hsv_to_rgb(_this.__color.h, _this.__color.s, _this.__color.v)
-      r = Math.round(r)
-      g = Math.round(g)
-      b = Math.round(b)
-      let background = `linear-gradient(to bottom, rgba(${r},${g},${b},1) 0%,rgba(${r},${b},${g},0) 100%)`
-      _this.__alpha_field.style.background = background
+      const { r, g, b } = _this.__color;
+      const background = `linear-gradient(to bottom, rgba(${r},${g},${b},1) 0%,rgba(${r},${b},${g},0) 100%)`;
+      _this.__alpha_field.style.background = background;
     }
 
     function setA(e) {
