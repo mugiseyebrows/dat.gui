@@ -557,6 +557,18 @@ common.extend(
       );
     },
 
+    /**
+     * Adds a new string controller with textarea.
+     *
+     * @param {*} object
+     * @param {*} property
+     * @returns {Controller} The controller that was added to the GUI.
+     * @instance
+     *
+     * @example
+     * var obj = {msg: 'This is long message'};
+     * gui.addTextarea(obj, 'msg');
+     */
     addTextarea: function(object, property) {
       return add(
         this,
@@ -568,6 +580,18 @@ common.extend(
       );
     },
 
+    /**
+     * Adds new FunctionController with button
+     *
+     * @param {*} object
+     * @param {*} property
+     * @returns {Controller} The controller that was added to the GUI.\
+     * @instance
+     *
+     * @example
+     * var obj = {action: function() {alert('hello')}};
+     * gui.addButton(obj, 'action');
+     */
     addButton: function(object, property) {
       return add(
         this,
