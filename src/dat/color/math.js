@@ -87,7 +87,31 @@ const ColorMath = {
 
   hex_with_component: function(hex, componentIndex, value) {
     return value << (tmpComponent = componentIndex * 8) | (hex & ~(0xFF << tmpComponent));
+  },
+
+  relative_luminance: function(r, g, b) {
+    function tr(c) {
+      const cn = c / 255;
+      return cn < 0.03928 ? cn / 12.92 : ((cn + 0.055) / 1.055) ** 2.4;
+    }
+    const R = tr(r);
+    const G = tr(g);
+    const B = tr(b);
+    return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+  },
+
+  contrast_to_white: function(r, g, b) {
+    const L1 = 1;
+    const L2 = this.relative_luminance(r, g, b);
+    return (L1 + 0.05) / (L2 + 0.05);
+  },
+
+  contrast_to_black: function(r, g, b) {
+    const L1 = this.relative_luminance(r, g, b);
+    const L2 = 0;
+    return (L1 + 0.05) / (L2 + 0.05);
   }
+
 };
 
 export default ColorMath;

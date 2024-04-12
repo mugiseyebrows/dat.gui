@@ -387,7 +387,11 @@ class ColorController extends Controller {
 
     this.__temp.a = 1;
 
-    const flip = (this.__color.v < 0.5 || this.__color.s > 0.5) ? 255 : 0;
+    const { r, g, b } = this.__color;
+    const contrastToWhite = math.contrast_to_white(r, g, b);
+    const contrastToBlack = math.contrast_to_black(r, g, b);
+
+    const flip = contrastToWhite > contrastToBlack ? 255 : 0;
     const _flip = 255 - flip;
 
     common.extend(this.__field_knob.style, {
