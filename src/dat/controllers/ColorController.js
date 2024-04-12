@@ -18,6 +18,8 @@ import interpret from '../color/interpret';
 import common from '../utils/common';
 import math from '../color/math'
 
+const checkboardImage = 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURf///7+/v6NDdjkAAAAJcEhZcwAAEnMAABJzAYwiuQcAAAAUSURBVBjTYwABQSCglEENMxgYGAAynwRB8BEAgQAAAABJRU5ErkJggg==)'
+
 /**
  * @class Represents a given property of an object that is a color.
  * @param {Object} object
@@ -164,7 +166,7 @@ class ColorController extends Controller {
     };
 
     common.extend(this.__alpha_bg.style, alpha_shared, {
-      backgroundImage: 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURf///7+/v6NDdjkAAAAJcEhZcwAAEnMAABJzAYwiuQcAAAAUSURBVBjTYwABQSCglEENMxgYGAAynwRB8BEAgQAAAABJRU5ErkJggg==)',
+      backgroundImage: checkboardImage,
       zIndex: 1,
     });
 
@@ -384,7 +386,8 @@ class ColorController extends Controller {
 
     this.__temp.a = 1;
 
-    const { r, g, b } = this.__color;
+    const { r, g, b, a } = this.__color;
+
     const contrastToWhite = math.contrast_to_white(r, g, b);
     const contrastToBlack = math.contrast_to_black(r, g, b);
 
@@ -409,8 +412,10 @@ class ColorController extends Controller {
 
     this.__input.value = this.__color.toString();
 
+    const gradient = `linear-gradient(to right, rgba(${r}, ${g}, ${b}, ${a}), rgba(${r}, ${g}, ${b}, ${a}))`;
+
     common.extend(this.__input.style, {
-      backgroundColor: this.__color.toHexString(),
+      background: gradient + ', ' + checkboardImage,
       color: 'rgb(' + flip + ',' + flip + ',' + flip + ')',
       textShadow: this.__input_textShadow + 'rgba(' + _flip + ',' + _flip + ',' + _flip + ',.7)'
     });
