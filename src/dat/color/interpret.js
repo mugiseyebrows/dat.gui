@@ -274,10 +274,31 @@ const INTERPRETATIONS = [
 let result;
 let toReturn;
 
+function validRgb(v) {
+  return !isNaN(v) && v >= 0 && v <= 255;
+}
+function validA(v) {
+  return !isNaN(v) && v >= 0 && v <= 1;
+}
+
 const interpret = function() {
   toReturn = false;
 
-  const original = arguments.length > 1 ? common.toArray(arguments) : arguments[0];
+  let original = arguments.length > 1 ? common.toArray(arguments) : arguments[0];
+
+  if (common.isString(original)) {
+    const m = original.match(/\[(.*)\]/);
+    if (m !== null) {
+      const rgba = m[1].split(',').map((e, i) => (i > 2 ? parseFloat(e) : parseInt(e, 10)));
+      const valid = rgba.map((e, i) => (i > 2 ? validA(e) : validRgb(e)));
+      if (valid.indexOf(false) < 0) {
+        if (rgba.length === 3 || rgba.length === 4) {
+          original = rgba;
+        }
+      }
+    }
+  }
+
   common.each(INTERPRETATIONS, function(family) {
     if (family.litmus(original)) {
       common.each(family.conversions, function(conversion, conversionName) {

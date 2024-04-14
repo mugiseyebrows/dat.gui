@@ -256,8 +256,6 @@ class ColorController extends Controller {
 
     this.updateDisplay();
 
-    updateAlphaBackground();
-
     function setSV(e) {
       if (e.type.indexOf('touch') === -1) { e.preventDefault(); }
 
@@ -283,8 +281,6 @@ class ColorController extends Controller {
 
       _this.setValue(_this.__color.toOriginal());
 
-      updateAlphaBackground();
-
       return false;
     }
 
@@ -305,16 +301,7 @@ class ColorController extends Controller {
 
       _this.setValue(_this.__color.toOriginal());
 
-      updateAlphaBackground();
-
       return false;
-    }
-
-    function updateAlphaBackground() {
-      const { r, g, b } = _this.__color;
-      const opaque = new Color([r, g, b, 1]);
-      const transparent = new Color([r, g, b, 0]);
-      _this.__alpha_field.style.background = linearGradient('to bottom', opaque, transparent) + ', ' + CHECKBOARD_IMAGE;
     }
 
     function setA(e) {
@@ -334,6 +321,28 @@ class ColorController extends Controller {
 
       _this.setValue(_this.__color.toOriginal());
     }
+  }
+
+  updateAlphaStyle() {
+    const { r, g, b } = this.__color;
+    const opaque = new Color([r, g, b, 1]);
+    const transparent = new Color([r, g, b, 0]);
+    this.__alpha_field.style.background = linearGradient('to bottom', opaque, transparent) + ', ' + CHECKBOARD_IMAGE;
+  }
+
+  updateInputStyle() {
+    const { r, g, b } = this.__color;
+    
+    const contrastToWhite = math.contrast_to_white(r, g, b);
+    const contrastToBlack = math.contrast_to_black(r, g, b);
+    const flip = contrastToWhite > contrastToBlack ? 255 : 0;
+    const _flip = 255 - flip;
+    
+    common.extend(this.__input.style, {
+      background: linearGradient('to right', this.__color, this.__color) + ', ' + CHECKBOARD_IMAGE,
+      color: 'rgb(' + flip + ',' + flip + ',' + flip + ')',
+      textShadow: this.__input_textShadow + 'rgba(' + _flip + ',' + _flip + ',' + _flip + ',.7)'
+    });
   }
 
   updateDisplay() {
@@ -389,11 +398,9 @@ class ColorController extends Controller {
 
     this.__input.value = this.__color.toString();
 
-    common.extend(this.__input.style, {
-      background: linearGradient('to right', this.__color, this.__color) + ', ' + CHECKBOARD_IMAGE,
-      color: 'rgb(' + flip + ',' + flip + ',' + flip + ')',
-      textShadow: this.__input_textShadow + 'rgba(' + _flip + ',' + _flip + ',' + _flip + ',.7)'
-    });
+    this.updateInputStyle();
+
+    this.updateAlphaStyle();
   }
 }
 

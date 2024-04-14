@@ -37,7 +37,11 @@ class Color {
   }
 
   toRGBAString() {
-    const {r, g, b, a} = this;
+    const { r, g, b } = this;
+    let a = this.a;
+    if (a === undefined) {
+      a = 1;
+    }
     return `rgba(${r}, ${g}, ${b}, ${a})`;
   }
 
