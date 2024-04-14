@@ -91,9 +91,6 @@ class ColorController extends Controller {
     const valueField = document.createElement('div');
 
     common.extend(this.__selector.style, {
-      width: '141px',
-      height: '102px',
-      padding: '3px',
       backgroundColor: '#222',
       boxShadow: '0px 1px 3px rgba(0,0,0,0.3)'
     });
@@ -102,35 +99,31 @@ class ColorController extends Controller {
       position: 'absolute',
       width: '12px',
       height: '12px',
-      border: this.__field_knob_border + (this.__color.v < 0.5 ? '#fff' : '#000'),
       boxShadow: '0px 1px 3px rgba(0,0,0,0.5)',
       borderRadius: '12px',
-      zIndex: 1
+      zIndex: 5
     });
 
     common.extend(this.__hue_knob.style, {
       position: 'absolute',
       width: '15px',
-      height: '2px',
+      height: '1.5px',
       borderRight: '4px solid #fff',
-      zIndex: 1
     });
 
     common.extend(this.__alpha_knob.style, {
       position: 'absolute',
       width: '15px',
-      height: '2px',
+      height: '1.5px',
       borderLeft: '4px solid #fff',
-      left: '-4px',
-      zIndex: 100
+      left: 0,
     });
 
     common.extend(this.__saturation_field.style, {
       width: '100px',
       height: '100px',
+      marginTop: '3px',
       border: '1px solid #555',
-      marginLeft: '20px',
-      marginRight: '3px',
       display: 'inline-block',
       cursor: 'pointer'
     });
@@ -146,19 +139,18 @@ class ColorController extends Controller {
       height: '100px',
       border: '1px solid #555',
       cursor: 'ns-resize',
-      position: 'absolute',
-      top: '3px',
-      right: '3px'
+      display: 'inline-block',
+      margin: '3px',
     });
 
     common.extend(this.__alpha_field.style, {
+      margin: '3px',
       width: '15px',
       height: '100px',
-      position: 'absolute',
-      top: '3px',
-      left: '3px',
       border: '1px solid #555',
       cursor: 'ns-resize',
+      display: 'inline-block',
+      zIndex: 2,
     });
 
     this.__hue_field.style.background = hueGradient();
@@ -252,11 +244,11 @@ class ColorController extends Controller {
     }
 
     this.__saturation_field.appendChild(valueField);
-    this.__selector.appendChild(this.__field_knob);
+    this.__selector.appendChild(this.__alpha_field);
     this.__selector.appendChild(this.__saturation_field);
     this.__selector.appendChild(this.__hue_field);
+    this.__selector.appendChild(this.__field_knob);
     this.__hue_field.appendChild(this.__hue_knob);
-    this.__selector.appendChild(this.__alpha_field);
     this.__alpha_field.appendChild(this.__alpha_knob);
 
     this.domElement.appendChild(this.__input);
@@ -380,15 +372,15 @@ class ColorController extends Controller {
     const _flip = 255 - flip;
 
     common.extend(this.__field_knob.style, {
-      marginLeft: 100 * this.__color.s - 7 + 19 + 'px',
-      marginTop: 100 * (1 - this.__color.v) - 7 + 'px',
+      marginLeft: 100 * this.__color.s + 14 + 'px',
+      marginTop: 100 * (1 - this.__color.v) - 3 + 'px',
       backgroundColor: this.__temp.toHexString(),
       border: this.__field_knob_border + 'rgb(' + flip + ',' + flip + ',' + flip + ')'
     });
 
-    this.__hue_knob.style.marginTop = (1 - this.__color.h / 360) * 100 + 'px';
+    this.__hue_knob.style.marginTop = (1 - this.__color.h / 360) * 100 - 1 + 'px';
 
-    this.__alpha_knob.style.marginTop = (1 - this.__color.a) * 100 + 'px';
+    this.__alpha_knob.style.marginTop = (1 - this.__color.a) * 100 - 1 + 'px';
 
     this.__temp.s = 1;
     this.__temp.v = 1;

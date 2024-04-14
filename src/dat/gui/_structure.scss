@@ -273,7 +273,7 @@ $input-font-size: 13px;
 
   .c:hover .selector,
   .selector.drag {
-    display: block;
+    display: flex;
   }
 
   li.save-row {
