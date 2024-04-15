@@ -245,9 +245,15 @@ $input-font-size: 13px;
     cursor: pointer;
   }
 
-  .cr.button .property-name{
+  .dg .cr.button .property-name{
+    width: 0;
+    overflow: hidden;
     font-size: 0;
-    color: transparent;
+  }
+
+  .cr.button .c {
+    width: 100%;
+    text-align: center;
   }
 
   .cr.button button {
